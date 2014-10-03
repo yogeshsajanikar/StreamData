@@ -202,6 +202,19 @@ namespace NHibernate.UserTypes
 			return x.GetHashCode ();
 		}
 
+        /// <summary>
+        /// Check if two objects are equal. 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public new bool Equals(object x, object y)
+        {
+            return System.Object.ReferenceEquals(x, y) ||
+                (!(x == null || y == null) && x.Equals(y));
+        }
+
+
 		/// <summary>
 		/// First get the information about the name of the file, and then pass the information
 		/// to location provider. The location provider supplies the path where the blob needs 
@@ -392,6 +405,8 @@ namespace NHibernate.UserTypes
 
 		private string _location = string.Empty;
 		private const string _locationKey = "location";
-	}
+
+
+    }
 }
 
