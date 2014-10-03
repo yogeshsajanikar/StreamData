@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.FileBlob", "NHibernate.FileBlob\NHibernate.FileBlob.csproj", "{C9546B3C-9D96-4930-A8CA-F1B665202BB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9546B3C-9D96-4930-A8CA-F1B665202BB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9546B3C-9D96-4930-A8CA-F1B665202BB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9546B3C-9D96-4930-A8CA-F1B665202BB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9546B3C-9D96-4930-A8CA-F1B665202BB5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = NHibernate.FileBlob\NHibernate.FileBlob.csproj
+	EndGlobalSection
+EndGlobal

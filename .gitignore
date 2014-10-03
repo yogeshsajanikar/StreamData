@@ -1,0 +1,7 @@
+*.userprefs
+*.obj
+*.exe
+*.dll
+bin
+obj
+packages/*/
