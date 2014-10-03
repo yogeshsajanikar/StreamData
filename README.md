@@ -1,6 +1,14 @@
 
 # FileBlob : A custom data type for NHibernate to handle files on disk
 
+## Need
+When working with project where many files need to be stored in the
+database, using byte array adds to the memory consumption. This
+project implements a custom type that converts a file into byte array,
+only when it is required (i.e. while committing to the
+database). 
+
+## Design
 A file blob is a custom data type for using files on the disk as a
 data type. This data type spans two columns:
 
@@ -9,7 +17,9 @@ data type. This data type spans two columns:
   about the file. This includes 
   * File Name, and
   * File Hash.
+
   The format in which the information is written to the information column is
+
         File Name;File Hash (HEX String)
 
 
