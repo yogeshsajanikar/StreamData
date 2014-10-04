@@ -30,14 +30,124 @@ using System.Text;
 
 namespace NHibernate.UserTypes.Utils
 {
+
+	/// <summary>
+	/// Provides a stream from where file can be read or written.
+	/// </summary>
+	public interface IStreamProvider
+	{
+		/// <summary>
+		/// Gets the provenance of the stream. In case of a file, it can be
+		/// a plain path. In other cases, this depends upon the implementation
+		/// where it is possible to resolve the provenance to the source. For
+		/// example, a URI can be provided which can be parsed by application
+		/// to download the file to local disk before creating the stream.
+		/// 
+		/// Note that provenance is created by resolving name, and location of 
+		/// the location provider.
+		/// </summary>
+		/// <value>The path.</value>
+		string Provenance { get; }
+
+		/// <summary>
+		/// A string that identities the stream. The name is stored in the 
+		/// database, in the information column alongwith its hash. In case
+		/// of a plain file, the name can be file name, where as in other cases
+		/// it can point to something that uniquely identifies the resource
+		/// in its location as pointed by location provider.
+		/// </summary>
+		string Name { get; }
+
+		/// <summary>
+		/// Get the stream from which information can be read.
+		/// </summary>
+		Stream Reader { get; } 
+
+		/// <summary>
+		/// Gets the writer stream where file can be written
+		/// </summary>
+		Stream Writer { get; }
+	}
+
+	public static class StreamProviderExtension 
+	{
+		public static byte [] ReadAllBytes(this IStreamProvider provider)
+		{
+			using(Stream rStream = provider.Reader) {
+				byte [] bytes = new byte[rStream.Length];
+				const int bufsize = 0x1000;
+				int cursor = 0;
+				int bytesRead = 0;
+
+				while ((bytesRead = rStream.Read (bytes, cursor, bufsize)) > 0) {
+					cursor += bytesRead;
+					if (bytesRead < bufsize)
+						break;
+				}
+
+				return bytes;
+			}
+		}
+	}
+
+
+	/// <summary>
+	/// Provides the file based stream provider. This is also a default stream
+	/// provider for the location provider. 
+	/// </summary>
+	public class FileStreamProvider : IStreamProvider
+	{
+		#region IStreamProvider implementation
+		public string Provenance {
+			get {
+				return _fileInfo.FullName;
+			}
+		}
+
+		public string Name {
+			get {
+				return _fileInfo.Name;
+			}
+		}
+		public Stream Reader {
+			get {
+				return _fileInfo.OpenRead ();
+			}
+		}
+		public Stream Writer {
+			get {
+				return _fileInfo.OpenWrite ();
+			}
+		}
+		#endregion
+
+		public FileStreamProvider(string path)
+		{
+			_fileInfo = new FileInfo (path);
+		}
+
+		FileInfo _fileInfo;
+
+	}
+
+
     /// <summary>
     /// A location provider helps class map dynamically map the location parameter, 
     /// and file name to a valid path name on the drive. 
     /// </summary>
     public class LocationProvider
     {
+		public virtual IStreamProvider GetLocation( string location, string name)
+		{
+			if (string.IsNullOrEmpty(location))
+				location = _defaultLocation.FullName;
+
+			var filename = Path.Combine(location, name);
+			return new FileStreamProvider (filename);
+		}
+
         /// <summary>
-        /// Gets the location, where the file blob should be stored. This behaviour 
+        /// Resolves the location, where the file blob should be stored. This behaviour 
         /// can be overridden in the derived class. The location provider needs to be
         /// registered in the <cref="NHibernate.UserTypes.LocationRegister"/>.
         /// 
@@ -53,16 +163,14 @@ namespace NHibernate.UserTypes.Utils
         /// <param name="location">Location parameter set in the class map</param>
         /// <param name="name">Name of the file, stored in the database.</param>
         /// <param name="hash">Hash of the file </param>
-        public virtual Tuple<bool, string> GetLocation(string location, string name, byte[] hash)
+        public virtual Tuple<bool, IStreamProvider> ResolveLocation (string location, string name, byte[] hash)
         {
-            if (string.IsNullOrEmpty(location))
-                location = _defaultLocation.FullName;
+			var streamProvider = GetLocation (location, name);
 
-            var filename = Path.Combine(location, name);
-            if (File.Exists(filename))
-                return System.Tuple.Create(false, filename);
+			if (File.Exists(streamProvider.Provenance))
+                return System.Tuple.Create(false, streamProvider);
 
-            return System.Tuple.Create(true, filename);
+            return System.Tuple.Create(true, streamProvider);
         }
 
         /// <summary>

@@ -195,13 +195,13 @@ namespace NHibernate.UserTypes
 				var hashInfo = rs.GetString(hashIndex);
 
 				var blobInfo = BlobFileInfo.FromString(hashInfo);
-				var fileinfo = provider.GetLocation(_location, blobInfo.Name, blobInfo.Hash);
+				var fileinfo = provider.ResolveLocation(_location, blobInfo.Name, blobInfo.Hash);
 
 				if (!fileinfo.Item1)
-					return new FileBlob(fileinfo.Item2); // No need to get the file.
+					return fileinfo.Item2; // No need to get the file.
 
 				// Read the file. Save it to the given location
-				using (var bw = new FileStream(fileinfo.Item2, FileMode.Create))
+				using (var bw = fileinfo.Item2.Writer)
 				{
 					const int bufsize = 0x1000;
 					byte [] buffer = new byte[bufsize];
@@ -216,7 +216,7 @@ namespace NHibernate.UserTypes
 					}
 				}
 
-				return new FileBlob(fileinfo.Item2);
+				return fileinfo.Item2;
 			}
 			catch (Exception exc) {
 				//TODO: Add logging support
@@ -246,10 +246,10 @@ namespace NHibernate.UserTypes
 			if (dbparam.DbType != DbType.Binary)
 				return;
 
-			Debug.Assert (value is FileBlob);
+			Debug.Assert (value is IStreamProvider);
 
-			var blob = value as FileBlob;
-			byte[] data = File.ReadAllBytes (blob.Path);
+			var blob = value as IStreamProvider;
+			byte[] data = blob.ReadAllBytes ();
 			dbparam.Value = data;
 
 			var hasher = SHA1.Create ();
@@ -327,7 +327,7 @@ namespace NHibernate.UserTypes
 		/// <value>The type of the returned.</value>
 		public System.Type ReturnedType {
 			get {
-				return typeof(FileBlob);
+				return typeof(IStreamProvider);
 			}
 		}
 
