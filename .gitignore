@@ -6,4 +6,4 @@ bin
 obj
 packages/*/
 .nuget
-.v11.suo
+*.suo

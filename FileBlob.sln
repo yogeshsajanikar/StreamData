@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.FileBlob", "NHibernate.FileBlob\NHibernate.FileBlob.csproj", "{C9546B3C-9D96-4930-A8CA-F1B665202BB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.FileBlob.NUnit", "NHibernate.FileBlob.NUnit\NHibernate.FileBlob.NUnit.csproj", "{BD97F0B7-36D5-40C5-9096-F12AC9A15FAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{C9546B3C-9D96-4930-A8CA-F1B665202BB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9546B3C-9D96-4930-A8CA-F1B665202BB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9546B3C-9D96-4930-A8CA-F1B665202BB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD97F0B7-36D5-40C5-9096-F12AC9A15FAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD97F0B7-36D5-40C5-9096-F12AC9A15FAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD97F0B7-36D5-40C5-9096-F12AC9A15FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD97F0B7-36D5-40C5-9096-F12AC9A15FAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
