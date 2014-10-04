@@ -8,4 +8,5 @@ install:
   - sudo apt-get install mono-devel mono-gmcs nunit-console
 
 script:
+  - nuget restore FileBlob.sln
   - xbuild /property:Configuration=Release FileBlob.sln
