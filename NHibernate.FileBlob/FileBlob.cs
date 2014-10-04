@@ -30,7 +30,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using NHibernate.UserTypes;
+using NHibernate.UserTypes.Utils;
 
 namespace NHibernate.UserTypes
 {
@@ -79,82 +79,29 @@ namespace NHibernate.UserTypes
 		private FileInfo _info;
 	}
 
-	public class LocationProvider
-	{
-		/// <summary>
-		/// Gets the location, where the file blob should be stored. This behaviour 
-		/// can be overridden in the derived class. The location provider needs to be
-		/// registered in the <cref="NHibernate.UserTypes.LocationRegister"/>.
-		/// 
-		/// The function is passed SHA1 hash of the file stored in the database. 
-		/// Implementation can use the hash to decide whether the file needs to be 
-		/// downloaded.
-		/// </summary>
-		/// <returns>The location where the FileBlob will be saved. It also 
-		/// returns a boolean that tells NHibernate whether to download the file 
-		/// or not. The default returns false, if a file with same name exists
-		/// at the given location, i.e. it does not try to match the hash.
-		/// </returns>
-		/// <param name="location">Location parameter set in the class map</param>
-		/// <param name="name">Name of the file, stored in the database.</param>
-		/// <param name="hash">Hash of the file </param>
-		public virtual Tuple<bool, string> GetLocation(string location, string name, byte [] hash)
-		{
-			if (string.IsNullOrEmpty (location))
-				location = _defaultLocation.FullName;
 
-			var filename = Path.Combine (location, name);
-			if (File.Exists (filename))
-				return System.Tuple.Create (false, filename);
-
-			return System.Tuple.Create(true, filename);
-		}
-
-		static LocationProvider()
-		{
-			var local = Environment.GetFolderPath (
-				Environment.SpecialFolder.LocalApplicationData, 
-				Environment.SpecialFolderOption.Create);
-
-			var localData = Path.Combine (local, "FileBlobData");
-
-			if (!Directory.Exists (localData))
-				Directory.CreateDirectory (localData);
-
-			_defaultLocation = new DirectoryInfo (localData);
-		}
-
-		static DirectoryInfo _defaultLocation;
-	};
-
-	public static class LocationRegister 
-	{
-
-		public static LocationProvider GetLocationProvider(string location)
-		{
-			LocationProvider provider = _defaultLocationProvider;
-			if (_locationRegister.TryGetValue (location, out provider))
-				return provider;
-
-			return _defaultLocationProvider;
-		}
-
-		static LocationRegister ()
-		{
-			_locationRegister = new Dictionary<string, LocationProvider> ();
-			_defaultLocationProvider = new LocationProvider ();
-		}
-
-		static LocationProvider _defaultLocationProvider;
-		static Dictionary<string, LocationProvider> _locationRegister;
-	}
-
+    /// <summary>
+    /// Internal class for quickly creating and parsing string representation
+    /// stored in the blob information column.
+    /// </summary>
 	internal class BlobFileInfo 
 	{
+        /// <summary>
+        /// Name of the file
+        /// </summary>
 		public string Name { get; set; }
 
+        /// <summary>
+        /// Hash of the blob
+        /// </summary>
 		public byte [] Hash { get; set; }
 
+        /// <summary>
+        /// Converts the blob information into following format: 
+        /// <br/>
+        /// File Name;File Hash
+        /// </summary>
+        /// <returns>Returns string representation of the file name along with its hash.</returns>
 		public override string ToString ()
 		{
 			var sbuilder = new StringBuilder ();
@@ -164,6 +111,11 @@ namespace NHibernate.UserTypes
 			return string.Format ("{0};{1}", Name, Hash);
 		}
 
+        /// <summary>
+        /// Create BlobFileInfo back from its string representation.
+        /// </summary>
+        /// <param name="infoString">information in Name;Hash format</param>
+        /// <returns>BlobFileInfo for a given string</returns>
 		public static BlobFileInfo FromString(string infoString)
 		{
 			char [] separators = { ';' };
@@ -171,6 +123,7 @@ namespace NHibernate.UserTypes
 			if (info.Length != 2)
 				new InvalidDataException("Invalid file, hash information in the blob");
 
+            // Converts string hex data into binary hash.
 			var hash = Enumerable.Range(0, info[1].Length)
 				.Where(i => 0 == i % 2)
 				.Select(x => Convert.ToByte(info[1].Substring(x, 2), 16))
