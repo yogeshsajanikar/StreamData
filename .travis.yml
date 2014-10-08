@@ -6,7 +6,10 @@ env:
 
 install:
   - sudo apt-get install mono-devel mono-gmcs nunit-console
+  - wget -O ./nuget.exe  http://nuget.org/nuget.exe
+  - mono nuget.exe restore FileBlob.sln
 
 script:
-  - nuget restore FileBlob.sln
   - xbuild /property:Configuration=Release FileBlob.sln
+ 
+  
