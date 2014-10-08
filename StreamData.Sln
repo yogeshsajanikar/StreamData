@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.FileBlob", "NHibernate.FileBlob\NHibernate.FileBlob.csproj", "{C9546B3C-9D96-4930-A8CA-F1B665202BB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.StreamData", "NHibernate.StreamData\NHibernate.StreamData.csproj", "{C9546B3C-9D96-4930-A8CA-F1B665202BB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.FileBlob.NUnit", "NHibernate.FileBlob.NUnit\NHibernate.FileBlob.NUnit.csproj", "{BD97F0B7-36D5-40C5-9096-F12AC9A15FAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.StreamData.NUnit", "NHibernate.StreamData.NUnit\NHibernate.StreamData.NUnit.csproj", "{BD97F0B7-36D5-40C5-9096-F12AC9A15FAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +24,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = NHibernate.FileBlob\NHibernate.FileBlob.csproj
+		StartupItem = NHibernate.StreamData\NHibernate.StreamData.csproj
 	EndGlobalSection
 EndGlobal

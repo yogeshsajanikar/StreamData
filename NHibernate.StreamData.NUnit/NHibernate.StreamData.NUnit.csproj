@@ -60,7 +60,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NHibernate.FileBlob\NHibernate.FileBlob.csproj">
+    <ProjectReference Include="..\NHibernate.StreamData\NHibernate.StreamData.csproj">
       <Project>{c9546b3c-9d96-4930-a8ca-f1b665202bb5}</Project>
       <Name>NHibernate.FileBlob</Name>
     </ProjectReference>
