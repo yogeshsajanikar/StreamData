@@ -34,57 +34,11 @@ using NHibernate.UserTypes.Utils;
 
 namespace NHibernate.UserTypes
 {
-	/// <summary>
-	/// File blob represents a file on the disk. A file blob holds information 
-	/// about file (path).
-	/// </summary>
-	public class FileBlob
-	{
-		/// <summary>
-		/// Gets the path to the file
-		/// </summary>
-		public virtual string Path 
-		{ 
-			get {
-				return _info.FullName;
-			}
-		}
-
-		/// <summary>
-		/// Gets the name of the file.
-		/// </summary>
-		public virtual string Name 
-		{
-			get {
-				return _info.Name;
-			}
-		}
-
-		/// <summary>
-		/// Create a file blob from the given path.
-		/// </summary>
-		/// <exception cref="FileNotFoundException">
-		/// If the given path does not point to a valid file, the exception is 
-		/// raised.
-		/// </exception>
-		/// <param name="path">Path to the file.</param>
-		public FileBlob (string path)
-		{
-			if (!File.Exists (path))
-				throw new FileNotFoundException ("File " + path + " does not exist");
-			  
-			_info = new FileInfo (path);
-		}
-
-		private FileInfo _info;
-	}
-
-
     /// <summary>
     /// Internal class for quickly creating and parsing string representation
     /// stored in the blob information column.
     /// </summary>
-	internal class BlobFileInfo 
+	internal class StreamInfo 
 	{
         /// <summary>
         /// Name of the file
@@ -108,7 +62,7 @@ namespace NHibernate.UserTypes
 			foreach (var b in Hash)
 				sbuilder.Append (b.ToString ("x2"));
 
-			return string.Format ("{0};{1}", Name, Hash);
+			return string.Format ("{0};{1}", Name, sbuilder.ToString());
 		}
 
         /// <summary>
@@ -116,7 +70,7 @@ namespace NHibernate.UserTypes
         /// </summary>
         /// <param name="infoString">information in Name;Hash format</param>
         /// <returns>BlobFileInfo for a given string</returns>
-		public static BlobFileInfo FromString(string infoString)
+		public static StreamInfo FromString(string infoString)
 		{
 			char [] separators = { ';' };
 			string [] info = infoString.Split(separators);
@@ -129,18 +83,18 @@ namespace NHibernate.UserTypes
 				.Select(x => Convert.ToByte(info[1].Substring(x, 2), 16))
 				.ToArray();
 
-			return new BlobFileInfo () { Hash = hash, Name = info[0] };
+			return new StreamInfo () { Hash = hash, Name = info[0] };
 		}
 	}
 
 	/// <summary>
-	/// Represents a user type <cref="NHibernate.UserTypes.FileBlob"/>. The file
+	/// Represents a user type <see cref="NHibernate.UserTypes.IStreamProvider"/>. The file
 	/// is uploaded to database from the location specified by user. While getting the 
 	/// file back from the database, the file is stored at the location specified
 	/// by the parameter "location". If the location is not specified, the file is 
 	/// stored  
 	/// </summary>
-	public class FileBlobType : IUserType, IParameterizedType
+	public class StreamProviderType : IUserType, IParameterizedType
 	{
 		/// <summary>
 		/// Return the hash code of the file blob. The contents are not checked, only path.
@@ -194,7 +148,7 @@ namespace NHibernate.UserTypes
 				var provider = LocationRegister.GetLocationProvider(this._location);
 				var hashInfo = rs.GetString(hashIndex);
 
-				var blobInfo = BlobFileInfo.FromString(hashInfo);
+				var blobInfo = StreamInfo.FromString(hashInfo);
 				var fileinfo = provider.ResolveLocation(_location, blobInfo.Name, blobInfo.Hash);
 
 				if (!fileinfo.Item1)
@@ -249,16 +203,13 @@ namespace NHibernate.UserTypes
 			Debug.Assert (value is IStreamProvider);
 
 			var blob = value as IStreamProvider;
-			byte[] data = blob.ReadAllBytes ();
-			dbparam.Value = data;
+			var data = blob.ReadAllBytes ();
+			dbparam.Value = data.Item1;
 
-			var hasher = SHA1.Create ();
-			var hash   = hasher.ComputeHash (data);
-
-			var infoparam = cmd.Parameters [index + 1] as IDbDataParameter;
+            var infoparam = cmd.Parameters [index + 1] as IDbDataParameter;
 			Debug.Assert (infoparam.DbType == DbType.String);
 
-			infoparam.Value = new BlobFileInfo () { Name = blob.Name, Hash = hash }.ToString ();
+			infoparam.Value = new StreamInfo () { Name = blob.Name, Hash = data.Item2 }.ToString ();
 		}
 
 		/// <summary>
@@ -344,6 +295,9 @@ namespace NHibernate.UserTypes
 		#region IParameterizedType implementation
 		public void SetParameterValues (System.Collections.Generic.IDictionary<string, string> parameters)
 		{
+            if (null == parameters)
+                return;
+
 			string value;
 			if (parameters.TryGetValue (_locationKey, out value))
 				_location = value;
@@ -351,15 +305,40 @@ namespace NHibernate.UserTypes
 
 		#endregion
 
-		public FileBlobType()
+		public StreamProviderType()
 		{
 
 		}
 
 		private string _location = string.Empty;
-		private const string _locationKey = "location";
+		protected const string _locationKey = "location";
+    }
 
+    /// <summary>
+    /// Derived class can create 
+    /// </summary>
+    public abstract class LocationParam
+    {
+        public abstract string Location { get; }
+    }
 
+    /// <summary>
+    /// FluentNHibernate does not have a way to store a parameter. This is a workaround if 
+    /// you are using FluentNHibernate. The parameter is sought dynamically when the 
+    /// provider type is instantiated.
+    /// </summary>
+    /// <typeparam name="T">
+    /// T must be an instance of LocationParam, and should have a default constructor.
+    /// </typeparam>
+    public class ParamStreamProviderType<T> : StreamProviderType where T : LocationParam, new()
+    {
+        public ParamStreamProviderType()
+        {
+            var parameters = new Dictionary<string,string> ();
+            T t = new T();
+            parameters.Add(_locationKey, t.Location);
+            SetParameterValues(parameters);
+        }
     }
 }
 
