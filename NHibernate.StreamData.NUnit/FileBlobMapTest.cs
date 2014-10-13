@@ -34,7 +34,7 @@ using FluentNHibernate.Cfg.Db;
 using NHibernate.Tool.hbm2ddl;
 using System.IO;
 
-namespace NHibernate.FileBlob.NUnit
+namespace NHibernate.StreamData.NUnit
 {
     class BlobData
     {
