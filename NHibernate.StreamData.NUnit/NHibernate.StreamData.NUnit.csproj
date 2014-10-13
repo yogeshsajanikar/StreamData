@@ -8,8 +8,8 @@
     <ProjectGuid>{BD97F0B7-36D5-40C5-9096-F12AC9A15FAD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NHibernate.FileBlob.NUnit</RootNamespace>
-    <AssemblyName>NHibernate.FileBlob.NUnit</AssemblyName>
+    <RootNamespace>NHibernate.StreamData.NUnit</RootNamespace>
+    <AssemblyName>NHibernate.StreamData.NUnit</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -56,13 +56,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileBlobMapTest.cs" />
+    <Compile Include="FileStreamDataMapTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NHibernate.StreamData\NHibernate.StreamData.csproj">
       <Project>{c9546b3c-9d96-4930-a8ca-f1b665202bb5}</Project>
-      <Name>NHibernate.FileBlob</Name>
+      <Name>NHibernate.StreamData</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

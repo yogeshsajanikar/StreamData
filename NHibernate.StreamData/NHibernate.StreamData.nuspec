@@ -7,11 +7,11 @@
     <authors>yogesh_sajanikar@yahoo.com</authors>
     <owners>Yogesh Sajanikar (yogesh_sajanikar@yahoo.com)</owners>
     <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
-    <projectUrl>https://github.com/yogeshsajanikar/FileBlob</projectUrl>
+    <projectUrl>https://github.com/yogeshsajanikar/StreamData</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
-		Initial release containing custom type (FileBlob)
+		Initial release containing custom type (StreamData)
 	</releaseNotes>
     <copyright>Copyright 2014 Yogesh Sajanikar</copyright>
     <tags>NHibernate</tags>

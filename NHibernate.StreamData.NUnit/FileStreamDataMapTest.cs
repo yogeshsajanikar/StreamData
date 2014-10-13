@@ -63,10 +63,10 @@ namespace NHibernate.StreamData.NUnit
             if (!Directory.Exists("Test"))
                 Directory.CreateDirectory("Test");
 
-            if (File.Exists(@"Test\RandomBytes"))
-                File.Delete(@"Test\RandomBytes");
+            if (File.Exists(@"Test/RandomBytes"))
+                File.Delete(@"Test/RandomBytes");
 
-            File.Copy("RandomBytes", @"Test\RandomBytes");
+            File.Copy("RandomBytes", @"Test/RandomBytes");
             _data = File.ReadAllBytes("RandomBytes");
         }
 

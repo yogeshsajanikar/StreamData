@@ -28,11 +28,11 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle ("NHibernate.FileBlob")]
-[assembly: AssemblyDescription ("NHibernate Custom file type for File")]
+[assembly: AssemblyTitle ("NHibernate.StreamData")]
+[assembly: AssemblyDescription ("NHibernate Custom Stream Data type for Files/Streams")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
-[assembly: AssemblyProduct ("")]
+[assembly: AssemblyCompany ("Yogesh Sajanikar")]
+[assembly: AssemblyProduct ("NHibernate.StreamData")]
 [assembly: AssemblyCopyright ("Yogesh Sajanikar (yogesh_sajanikar@yahoo.com)")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
